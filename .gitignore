@@ -11,6 +11,10 @@ __pycache__/
 test-results/
 playwright-report/
 
+# Allure
+allure-results/
+allure-report/
+
 # IDE
 .idea/
 .vscode/

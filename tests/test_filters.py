@@ -1,8 +1,12 @@
+import allure
+
 from pages.todos_page import TodosPage
 
 
+@allure.feature("Filters")
 class TestFilters:
 
+    @allure.title("Active filter shows only incomplete todos")
     def test_active_filter_shows_only_incomplete_todos(self, todos_page: TodosPage) -> None:
         todos_page.add_todo("Active item")
         todos_page.add_todo("Completed item")
@@ -17,6 +21,7 @@ class TestFilters:
             "Completed item"
         ).is_visible(), "Completed item should not appear in Active view"
 
+    @allure.title("Completed filter shows only completed todos")
     def test_completed_filter_shows_only_completed_todos(self, todos_page: TodosPage) -> None:
         todos_page.add_todo("Active item")
         todos_page.add_todo("Completed item")
