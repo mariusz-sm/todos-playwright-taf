@@ -1,5 +1,6 @@
 import pytest
 from playwright.sync_api import Page
+
 from pages.todos_page import TodosPage
 
 

@@ -17,5 +17,6 @@ class TestCompleteTodo:
         todos_page.complete_todo("Buy milk")
 
         todo = todos_page.get_todo_item("Buy milk")
-        assert "completed" in todo.get_attribute("class"), \
-            "Completed todo item should have 'completed' CSS class"
+        assert "completed" in todo.get_attribute(
+            "class"
+        ), "Completed todo item should have 'completed' CSS class"

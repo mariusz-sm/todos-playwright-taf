@@ -1,14 +1,18 @@
 import pytest
+
 from pages.todos_page import TodosPage
 
 
 class TestAddTodo:
 
-    @pytest.mark.parametrize("text", [
-        "Buy groceries",
-        "Ćma",
-        "Task 42",
-    ])
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "Buy groceries",
+            "Ćma",
+            "Task 42",
+        ],
+    )
     def test_add_todo(self, todos_page: TodosPage, text: str) -> None:
         todos_page.add_todo(text)
 
