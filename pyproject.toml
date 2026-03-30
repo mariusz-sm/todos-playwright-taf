@@ -1,0 +1,25 @@
+[tool.poetry]
+package-mode = false
+
+[project]
+name = "todos-playwright-taf"
+version = "0.1.0"
+description = "Test automation project for Todos app (Pytest + Playwright)"
+authors = [
+    {name = "mariusz-sm",email = "mariusz.smarz@gmail.com"}
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pytest (>=9.0.2,<10.0.0)",
+    "pytest-playwright (>=0.7.2,<0.8.0)",
+    "playwright (>=1.58.0,<2.0.0)"
+]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
