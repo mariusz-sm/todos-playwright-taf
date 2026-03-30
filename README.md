@@ -19,6 +19,7 @@ Validates core functionality of the TodoMVC application:
 | [Pytest](https://docs.pytest.org/) | Test runner |
 | [Playwright](https://playwright.dev/python/) | Browser automation |
 | [pytest-playwright](https://playwright.dev/python/docs/test-runners) | Pytest integration |
+| [Allure](https://allurereport.org/docs/pytest/) | Test reporting |
 | [Poetry](https://python-poetry.org/) | Dependency management |
 
 ## Project Structure
@@ -44,6 +45,7 @@ The framework uses the **Page Object Model (POM)** pattern. `TodosPage` encapsul
 
 - Python 3.12+
 - [Poetry](https://python-poetry.org/docs/#installation)
+- [Allure CLI](https://allurereport.org/docs/install/) (for generating reports)
 
 ### Install
 
@@ -85,6 +87,31 @@ Run on a specific browser (default is Chromium):
 ```bash
 poetry run pytest --browser firefox
 poetry run pytest --browser webkit
+```
+
+## Allure Report
+
+Tests are annotated with `@allure.feature` and `@allure.title` for structured reporting. On failure, a screenshot is automatically captured and attached to the report.
+
+### Generate and open report
+
+**Step 1** — run tests (allure results are written to `allure-results/` automatically):
+
+```bash
+poetry run pytest
+```
+
+**Step 2** — generate and open the HTML report:
+
+```bash
+allure serve allure-results
+```
+
+`allure serve` generates the report and opens it in the browser in one step. Alternatively, to generate a static report:
+
+```bash
+allure generate allure-results --clean -o allure-report
+allure open allure-report
 ```
 
 ## Test Overview

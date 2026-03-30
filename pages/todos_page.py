@@ -1,25 +1,24 @@
-from playwright.sync_api import Locator, Page
+from playwright.sync_api import Locator
+
+from pages.base_page import BasePage
 
 
-class TodosPage:
-    URL = "https://demo.playwright.dev/todomvc"
+class TodosPage(BasePage):
+    PATH = "/todomvc"
 
-    def __init__(self, page: Page) -> None:
-        self.page = page
+    def _init_locators(self) -> None:
+        self.new_todo_input: Locator = self.page.locator("input.new-todo")
+        self.todo_list: Locator = self.page.locator("ul.todo-list")
+        self.todo_items: Locator = self.page.locator("ul.todo-list li")
+        self.footer: Locator = self.page.locator("footer.footer")
+        self.items_left_count: Locator = self.page.locator("span.todo-count strong")
 
-        self.new_todo_input: Locator = page.locator("input.new-todo")
-        self.todo_list: Locator = page.locator("ul.todo-list")
-        self.todo_items: Locator = page.locator("ul.todo-list li")
-        self.footer: Locator = page.locator("footer.footer")
-        self.items_left_count: Locator = page.locator("span.todo-count strong")
-
-        self.filter_all: Locator = page.get_by_role("link", name="All")
-        self.filter_active: Locator = page.get_by_role("link", name="Active")
-        self.filter_completed: Locator = page.get_by_role("link", name="Completed")
-        self.clear_completed_button: Locator = page.get_by_role("button", name="Clear completed")
-
-    def navigate(self) -> None:
-        self.page.goto(self.URL)
+        self.filter_all: Locator = self.page.get_by_role("link", name="All")
+        self.filter_active: Locator = self.page.get_by_role("link", name="Active")
+        self.filter_completed: Locator = self.page.get_by_role("link", name="Completed")
+        self.clear_completed_button: Locator = self.page.get_by_role(
+            "button", name="Clear completed"
+        )
 
     def add_todo(self, text: str) -> None:
         self.new_todo_input.fill(text)
