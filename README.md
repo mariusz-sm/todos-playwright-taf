@@ -192,6 +192,7 @@ addopts =
 base_url = https://demo.playwright.dev
 markers =
     smoke: marks tests as smoke tests (fast, core user flows only)
+```
 
 Any option set in `addopts` applies to every `pytest` run. CLI flags passed at runtime override or extend `addopts`.
 
