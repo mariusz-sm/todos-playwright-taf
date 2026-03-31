@@ -52,7 +52,7 @@ Install the following before cloning the repository:
 |---|---|---|
 | Python | 3.12 | [python.org](https://www.python.org/downloads/) |
 | Poetry | any | [python-poetry.org](https://python-poetry.org/docs/#installation) |
-| Allure CLI | any | [allurereport.org](https://allurereport.org/docs/install/) |
+| Allure CLI | any | [allurereport.org](https://allurereport.org/docs/v2/install-for-windows/) |
 
 Verify your Python version:
 
