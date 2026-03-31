@@ -1,27 +1,28 @@
 import allure
+import pytest
 
 from pages.todos_page import TodosPage
+
+TODO_TEXT = "Complete todo"
 
 
 @allure.feature("Complete Todo")
 class TestCompleteTodo:
 
-    @allure.title("Completed todo appears in Completed view")
-    def test_completed_todo_appears_in_completed_view(self, todos_page: TodosPage) -> None:
-        todos_page.add_todo("Buy milk")
-        todos_page.complete_todo("Buy milk")
+    @pytest.fixture()
+    def completed_todo(self, todos_page):
+        todos_page.add_todo(TODO_TEXT)
+        todos_page.complete_todo(TODO_TEXT)
+        yield todos_page
 
-        todos_page.filter_completed.click()
+    @allure.title("Todo item can be marked as completed")
+    def test_todo_item_can_be_marked_as_completed(self, completed_todo: TodosPage) -> None:
+        todo = completed_todo.get_todo_item(TODO_TEXT)
 
-        todo = todos_page.get_todo_item("Buy milk")
-        assert not todo.is_visible(), "Completed todo should appear in Completed view"
+        assert "completed" in todo.get_attribute("class")
 
-    @allure.title("Completed todo has 'completed' CSS class")
-    def test_completed_todo_has_completed_css_class(self, todos_page: TodosPage) -> None:
-        todos_page.add_todo("Buy milk")
-        todos_page.complete_todo("Buy milk")
+    @allure.title("Completed item appears in Completed view")
+    def test_completed_item_appears_in_completed_view(self, completed_todo: TodosPage) -> None:
+        completed_todo.filter_completed.click()
 
-        todo = todos_page.get_todo_item("Buy milk")
-        assert "completed" in todo.get_attribute(
-            "class"
-        ), "Completed todo item should have 'completed' CSS class"
+        assert completed_todo.get_todo_item(TODO_TEXT).is_visible()

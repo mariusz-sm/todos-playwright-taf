@@ -1,38 +1,40 @@
 import allure
+import pytest
 
 from pages.todos_page import TodosPage
+
+TODO_TEXT = "To be deleted"
 
 
 @allure.feature("Delete Todo")
 class TestDeleteTodo:
 
+    @pytest.fixture()
+    def todo(self, todos_page):
+        todos_page.add_todo(TODO_TEXT)
+        yield todos_page
+
     @allure.title("Deleted todo does not appear in All view")
-    def test_deleted_todo_does_not_appear_in_all_view(self, todos_page: TodosPage) -> None:
-        todos_page.add_todo("To be deleted")
-        todos_page.delete_todo("To be deleted")
+    def test_deleted_todo_does_not_appear_in_all_view(self, todo: TodosPage) -> None:
+        todo.delete_todo(TODO_TEXT)
 
-        todos_page.filter_all.click()
+        todo.filter_all.click()
 
-        todo = todos_page.get_todo_item("To be deleted")
-        assert not todo.is_visible(), "Deleted todo should not appear in All view"
+        assert not todo.get_todo_item(TODO_TEXT).is_visible()
 
     @allure.title("Deleted todo does not appear in Active view")
-    def test_deleted_todo_does_not_appear_in_active_view(self, todos_page: TodosPage) -> None:
-        todos_page.add_todo("To be deleted")
-        todos_page.delete_todo("To be deleted")
+    def test_deleted_todo_does_not_appear_in_active_view(self, todo: TodosPage) -> None:
+        todo.delete_todo(TODO_TEXT)
 
-        todos_page.filter_active.click()
+        todo.filter_active.click()
 
-        todo = todos_page.get_todo_item("To be deleted")
-        assert not todo.is_visible(), "Deleted todo should not appear in Active view"
+        assert not todo.get_todo_item(TODO_TEXT).is_visible()
 
     @allure.title("Deleted todo does not appear in Completed view")
-    def test_deleted_todo_does_not_appear_in_completed_view(self, todos_page: TodosPage) -> None:
-        todos_page.add_todo("To be deleted")
-        todos_page.complete_todo("To be deleted")
-        todos_page.delete_todo("To be deleted")
+    def test_deleted_todo_does_not_appear_in_completed_view(self, todo: TodosPage) -> None:
+        todo.complete_todo(TODO_TEXT)
+        todo.delete_todo(TODO_TEXT)
 
-        todos_page.filter_completed.click()
+        todo.filter_completed.click()
 
-        todo = todos_page.get_todo_item("To be deleted")
-        assert not todo.is_visible(), "Deleted todo should not appear in Completed view"
+        assert not todo.get_todo_item(TODO_TEXT).is_visible()
