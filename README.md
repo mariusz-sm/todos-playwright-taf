@@ -19,6 +19,7 @@ Validates core functionality of the TodoMVC application:
 | [Pytest](https://docs.pytest.org/) | Test runner |
 | [Playwright](https://playwright.dev/python/) | Browser automation |
 | [pytest-playwright](https://playwright.dev/python/docs/test-runners) | Pytest integration |
+| [pytest-xdist](https://pytest-xdist.readthedocs.io/) | Parallel test execution |
 | [Allure](https://allurereport.org/docs/pytest/) | Test reporting |
 | [Poetry](https://python-poetry.org/) | Dependency management |
 
@@ -27,14 +28,16 @@ Validates core functionality of the TodoMVC application:
 ```
 todos-playwright-taf/
 ├── pages/
+│   ├── base_page.py       # Abstract base class with shared locators and helpers
 │   └── todos_page.py      # Page Object Model for the TodoMVC page
 ├── tests/
-│   ├── conftest.py        # Shared fixtures (todos_page)
+│   ├── conftest.py        # Shared fixtures (todos_page, screenshot on failure)
 │   ├── test_add_todo.py
 │   ├── test_complete_todo.py
 │   ├── test_delete_todo.py
 │   └── test_filters.py
-└── pyproject.toml
+├── pyproject.toml
+└── pytest.ini
 ```
 
 The framework uses the **Page Object Model (POM)** pattern. `TodosPage` encapsulates all locators and actions, keeping tests clean and focused on behaviour.
@@ -43,18 +46,58 @@ The framework uses the **Page Object Model (POM)** pattern. `TodosPage` encapsul
 
 ### Prerequisites
 
-- Python 3.12+
-- [Poetry](https://python-poetry.org/docs/#installation)
-- [Allure CLI](https://allurereport.org/docs/install/) (for generating reports)
+Install the following before cloning the repository:
 
-### Install
+| Tool | Min version | Install guide |
+|---|---|---|
+| Python | 3.12 | [python.org](https://www.python.org/downloads/) |
+| Poetry | any | [python-poetry.org](https://python-poetry.org/docs/#installation) |
+| Allure CLI | any | [allurereport.org](https://allurereport.org/docs/install/) |
+
+Verify your Python version:
 
 ```bash
+python --version   # must be 3.12 or higher
+```
+
+> If you need to manage multiple Python versions, [pyenv](https://github.com/pyenv/pyenv) is a good option.
+
+### Step 1 — Clone and install dependencies
+
+```bash
+git clone <repository-url>
+cd todos-playwright-taf
 poetry install
 poetry run playwright install
 ```
 
-`poetry install` installs Python dependencies. `playwright install` downloads the browser binaries (Chromium, Firefox, WebKit) — this step is required and is separate from the Python package install.
+`poetry install` installs all Python dependencies into an isolated virtual environment. `playwright install` downloads the browser binaries (Chromium, Firefox, WebKit) — this is a separate step and is required.
+
+### Step 2 — Create pytest.ini
+
+`pytest.ini` is not committed to the repository. You must create it in the project root before running tests.
+
+Minimum required configuration:
+
+```ini
+[pytest]
+testpaths = tests
+pythonpath = .
+addopts = --alluredir=allure-results -n 1
+base_url = https://demo.playwright.dev
+```
+
+`base_url` is required — tests will fail without it. Set it to the base URL of the application under test.
+
+See the [pytest.ini](#pytestini) section for other options.
+
+### Step 3 — Verify the setup
+
+Run the full test suite to confirm everything is working:
+
+```bash
+poetry run pytest
+```
 
 ## Running Tests
 
@@ -76,18 +119,68 @@ Run a specific test:
 poetry run pytest tests/test_add_todo.py::TestAddTodo::test_add_todo
 ```
 
-Run in headed mode (visible browser):
+### Headed mode
+
+By default, Playwright runs tests headlessly (no visible browser window). To run with a visible browser:
 
 ```bash
 poetry run pytest --headed
 ```
 
-Run on a specific browser (default is Chromium):
+### Browsers
+
+The default browser is Chromium. To run on a different browser:
 
 ```bash
 poetry run pytest --browser firefox
 poetry run pytest --browser webkit
 ```
+
+All three browsers (Chromium, Firefox, WebKit) are installed by `playwright install`.
+
+### Device emulation
+
+Playwright can emulate specific devices (screen size, user agent, touch support). To run tests against a specific device:
+
+```bash
+poetry run pytest --device "iPhone 13"
+poetry run pytest --device "iPad Pro 11"
+poetry run pytest --device "Pixel 5"
+```
+
+You can combine `--browser` and `--device`:
+
+```bash
+poetry run pytest --browser webkit --device "iPhone 13"
+```
+
+### Parallel execution
+
+Tests run with a single worker by default (`-n 1` in `pytest.ini`). With ~11 tests, each worker spawns its own browser process and the startup overhead outweighs the time saved. Increase workers as the suite grows — at around 50+ tests the gains become meaningful.
+
+```bash
+poetry run pytest -n auto   # workers based on available CPU cores
+poetry run pytest -n 4      # fixed number of workers
+```
+
+## pytest.ini
+
+The `pytest.ini` file at the project root controls default options. Below is an annotated example:
+
+```ini
+[pytest]
+testpaths = tests           # directory pytest collects tests from
+pythonpath = .              # adds project root to sys.path (needed for 'pages' imports)
+addopts =
+    --alluredir=allure-results  # write Allure results to this directory
+    -n 1                        # number of parallel workers (1 = sequential)
+    # --headed                  # uncomment to always run with a visible browser
+    # --browser firefox         # uncomment to change the default browser
+    # --device "iPhone 13"      # uncomment to enable device emulation
+base_url = https://demo.playwright.dev
+```
+
+Any option set in `addopts` applies to every `pytest` run. CLI flags passed at runtime override or extend `addopts`.
 
 ## Allure Report
 

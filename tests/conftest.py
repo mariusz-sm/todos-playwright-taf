@@ -5,6 +5,11 @@ from playwright.sync_api import Page
 from pages.todos_page import TodosPage
 
 
+@pytest.fixture(scope="session")
+def base_url(request: pytest.FixtureRequest) -> str:
+    return request.config.getini("base_url")
+
+
 @pytest.fixture()
 def todos_page(page: Page, base_url: str) -> TodosPage:
     todos = TodosPage(page, base_url)
@@ -15,7 +20,8 @@ def todos_page(page: Page, base_url: str) -> TodosPage:
 @pytest.fixture(autouse=True)
 def screenshot_on_failure(page: Page, request: pytest.FixtureRequest) -> None:
     yield
-    if request.node.rep_call.failed:
+    rep_call = getattr(request.node, "rep_call", None)
+    if rep_call and rep_call.failed:
         screenshot = page.screenshot()
         allure.attach(screenshot, name="screenshot", attachment_type=allure.attachment_type.PNG)
 
