@@ -20,7 +20,7 @@ Validates core functionality of the TodoMVC application:
 | [Playwright](https://playwright.dev/python/) | Browser automation |
 | [pytest-playwright](https://playwright.dev/python/docs/test-runners) | Pytest integration |
 | [pytest-xdist](https://pytest-xdist.readthedocs.io/) | Parallel test execution |
-| [Allure](https://allurereport.org/docs/pytest/) | Test reporting |
+| [Allure](https://allurereport.org/) | Test reporting |
 | [Poetry](https://python-poetry.org/) | Dependency management |
 
 ## Project Structure
