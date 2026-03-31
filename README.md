@@ -154,6 +154,18 @@ You can combine `--browser` and `--device`:
 poetry run pytest --browser webkit --device "iPhone 13"
 ```
 
+### Smoke tests
+
+Smoke tests cover the three core user actions (add, complete, delete) and are meant for a quick sanity check — for example after a deployment.
+
+```bash
+poetry run pytest -m smoke        # run only smoke tests
+```
+
+```bash
+poetry run pytest -m "not smoke"  # run everything except smoke tests
+```
+
 ### Parallel execution
 
 Tests run with a single worker by default (`-n 1` in `pytest.ini`). With ~11 tests, each worker spawns its own browser process and the startup overhead outweighs the time saved. Increase workers as the suite grows — at around 50+ tests the gains become meaningful.
@@ -178,7 +190,8 @@ addopts =
     # --browser firefox         # uncomment to change the default browser
     # --device "iPhone 13"      # uncomment to enable device emulation
 base_url = https://demo.playwright.dev
-```
+markers =
+    smoke: marks tests as smoke tests (fast, core user flows only)
 
 Any option set in `addopts` applies to every `pytest` run. CLI flags passed at runtime override or extend `addopts`.
 

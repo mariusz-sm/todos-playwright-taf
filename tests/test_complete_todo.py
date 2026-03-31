@@ -16,6 +16,7 @@ class TestCompleteTodo:
         yield todos_page
 
     @allure.title("Todo item can be marked as completed")
+    @pytest.mark.smoke
     def test_todo_item_can_be_marked_as_completed(self, completed_todo: TodosPage) -> None:
         todo = completed_todo.get_todo_item(TODO_TEXT)
 

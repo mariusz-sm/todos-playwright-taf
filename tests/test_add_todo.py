@@ -11,7 +11,7 @@ class TestAddTodo:
     @pytest.mark.parametrize(
         "text",
         [
-            pytest.param("Buy groceries", id="english_text"),
+            pytest.param("Buy groceries", id="english_text", marks=pytest.mark.smoke),
             pytest.param("Ćma", id="non_english_characters"),
             pytest.param("Task 42", id="text_with_numbers"),
         ],

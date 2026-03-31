@@ -17,6 +17,7 @@ class TestDeleteTodo:
         yield todos_page
 
     @allure.title("Deleted todo does not appear in All view")
+    @pytest.mark.smoke
     def test_deleted_todo_does_not_appear_in_all_view(self, two_todos: TodosPage) -> None:
         two_todos.delete_todo(ITEM_TO_DELETE)
 
